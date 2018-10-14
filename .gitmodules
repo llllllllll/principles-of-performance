@@ -1,0 +1,6 @@
+[submodule "submodules/cpython"]
+	path = submodules/cpython
+	url = https://github.com/python/cpython
+[submodule "benchmarks/c++/benchmark"]
+	path = benchmarks/c++/benchmark
+	url = git@github.com:google/benchmark.git

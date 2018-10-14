@@ -1,0 +1,37 @@
+# Compiled python files
+*.py[co]
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+sdist
+
+# C Extension artifacts
+*.o
+*.so
+*.out
+
+# pypi
+MANIFEST
+
+# pytest
+.cache
+
+htmlcov
+
+venv/
+
+.vagrant
+
+# PyCharm settings dir
+.idea
+
+tutorial/build/*
+venv/*
+
+*.gdb_history
