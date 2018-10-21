@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Bits &mdash; principles-of-performance  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Low Level Computation" href="low-level-computation.html" />
+    <link rel="prev" title="Principles of Performance" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> principles-of-performance
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#representing-non-negative-integers-with-bits">Representing Non-Negative Integers with Bits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#addition-with-bits">Addition with Bits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#representing-negative-numbers">Representing Negative Numbers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#singed-magnitude">Singed Magnitude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#two-s-complement">Two’s Complement</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="low-level-computation.html">Low Level Computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-locality.html">Memory Locality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-management.html">Memory Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-optimize-code.html">How to Optimize Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-overview.html">Python Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy-overview.html">Numpy Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">principles-of-performance</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Bits</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/bits.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bits">
+<h1>Bits<a class="headerlink" href="#bits" title="Permalink to this headline">¶</a></h1>
+<p>A <a class="reference internal" href="appendix.html#bit"><span class="std std-ref">“bit”</span></a> is the most fundamental unit for storing information. It
+may either be true, often denoted as 1, or false, often denoted as 0. While we
+can only store two states in a single bit, if we group them together we can
+store exponentially more information.</p>
+<p>1 bit (2 states):</p>
+<ul class="simple">
+<li>0</li>
+<li>1</li>
+</ul>
+<p>2 bits (4 states):</p>
+<ul class="simple">
+<li>00</li>
+<li>01</li>
+<li>10</li>
+<li>11</li>
+</ul>
+<p>3 bits (8 states):</p>
+<ul class="simple">
+<li>000</li>
+<li>001</li>
+<li>010</li>
+<li>011</li>
+<li>100</li>
+<li>101</li>
+<li>110</li>
+<li>111</li>
+</ul>
+<p>The number of states representable by <span class="math notranslate nohighlight">\(n\)</span> bits is <span class="math notranslate nohighlight">\(2^{n}\)</span>.</p>
+<div class="section" id="representing-non-negative-integers-with-bits">
+<h2>Representing Non-Negative Integers with Bits<a class="headerlink" href="#representing-non-negative-integers-with-bits" title="Permalink to this headline">¶</a></h2>
+<p>We can uniquely represent non-negative integers using just bits with the
+following formula:</p>
+<p>Let <span class="math notranslate nohighlight">\(s\)</span> be the number of bits and let <span class="math notranslate nohighlight">\(B\)</span> be the sequence of bits:</p>
+<div class="math notranslate nohighlight">
+\[n = \sum_{i=1}^{s}{B_i2^{i - 1}}\]</div>
+<p>For example, to represent 13 in 8 bits, we would need:</p>
+<div class="math notranslate nohighlight">
+\[0(2^{7}) + 0(2^{6}) + 0(2^{5}) + 0(2^{4}) + 1(2^{3}) + 1(2^{2}) + 0(2^{1}) +
+1(2^{0})\]</div>
+<p>which can be written out as: <code class="docutils literal notranslate"><span class="pre">00001101</span></code>.</p>
+</div>
+<div class="section" id="addition-with-bits">
+<h2>Addition with Bits<a class="headerlink" href="#addition-with-bits" title="Permalink to this headline">¶</a></h2>
+<p>We can use the same algorithm for addition that we learned in elementary school.</p>
+<p>To walk through an example, we will try to add 13 and 4:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="mi">1101</span>
+<span class="o">+</span>  <span class="mi">100</span>
+<span class="o">-------</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="mi">1101</span>
+<span class="o">+</span>  <span class="mi">100</span>
+<span class="o">-------</span>
+     <span class="mi">1</span>     <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="mi">1101</span>
+<span class="o">+</span>  <span class="mi">100</span>
+<span class="o">-------</span>
+    <span class="mi">01</span>     <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+           <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="mi">1</span>
+  <span class="mi">1101</span>
+<span class="o">+</span>  <span class="mi">100</span>
+<span class="o">-------</span>
+   <span class="mi">001</span>     <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+           <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+           <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">carry</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="mi">11</span>
+  <span class="mi">1101</span>
+<span class="o">+</span>  <span class="mi">100</span>
+<span class="o">-------</span>
+  <span class="mi">0001</span>     <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+           <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+           <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">carry</span> <span class="mi">1</span>
+           <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">carry</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="mi">11</span>
+  <span class="mi">1101</span>
+<span class="o">+</span>  <span class="mi">100</span>
+<span class="o">-------</span>
+ <span class="mi">10001</span>     <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+           <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+           <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">carry</span> <span class="mi">1</span>
+           <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">carry</span> <span class="mi">1</span>
+           <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="representing-negative-numbers">
+<h2>Representing Negative Numbers<a class="headerlink" href="#representing-negative-numbers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="singed-magnitude">
+<h3>Singed Magnitude<a class="headerlink" href="#singed-magnitude" title="Permalink to this headline">¶</a></h3>
+<p>Given that there are only two states for the sign of a number (positive or
+negative), you could reserve a particular bit to denote the sign, and then use
+the remaining bits to denote the magnitude of the value. For example, using 0 to
+denote positive and 1 to denote negative, in 8 bits we can represent values in
+the range:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">01111111</span> <span class="o">=</span> <span class="o">+</span><span class="mi">127</span>
+
+<span class="mi">11111111</span> <span class="o">=</span> <span class="o">-</span><span class="mi">127</span>
+</pre></div>
+</div>
+<p>Unfortunately, this representation allows multiple representations for 0:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">00000000</span> <span class="o">=</span> <span class="o">+</span><span class="mi">0</span>
+<span class="mi">10000000</span> <span class="o">=</span> <span class="o">-</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>This representation will also complicate the algorithms needed to perform
+arithmetic with signed numbers.</p>
+</div>
+<div class="section" id="two-s-complement">
+<h3>Two’s Complement<a class="headerlink" href="#two-s-complement" title="Permalink to this headline">¶</a></h3>
+<p>In order to simplify arithmetic and produce a unique representation for each
+number, most computers use two’s complement to represent negative integers. To
+find the two’s complement representation of a negative number, take the absolute
+value, add one, and then do a binary negation. A binary negation is where you
+flip every true bit to false, and every false bit to true. Because there could
+be an infinite number of leading zeroes to negate, we need to ahead of time
+decide the number of bits we will be working with. This is known as the
+<a class="reference internal" href="appendix.html#bit-width"><span class="std std-ref">“width”</span></a> of an integer.</p>
+<p>For example, to represent -17 in 8 bits using two’s complement:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">17</span>
+<span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="mi">17</span>
+<span class="mi">17</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">18</span>
+<span class="nb">bin</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span> <span class="o">=</span> <span class="mi">00010010</span>
+<span class="o">~</span><span class="mi">00010010</span> <span class="o">=</span> <span class="mi">11101101</span>
+</pre></div>
+</div>
+<p>The two’s complement representation allows us to implement subtraction by
+implementing it as addition of the unsigned interpretation of the two’s
+complement value. For example, let’s subtract 4 from 13. We will do this by
+adding -4 to 13.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">bin</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span> <span class="o">=</span> <span class="mi">00001101</span>
+<span class="nb">bin</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="o">=</span> <span class="mi">00000100</span>
+</pre></div>
+</div>
+<p>To negate a number with two’s complement representation, either positive or
+negative) is done by inverting all of the bits and then adding one. So to get -4
+we would do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">bin</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>      <span class="o">=</span> <span class="mi">00000100</span>
+<span class="o">~</span><span class="nb">bin</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>     <span class="o">=</span> <span class="mi">11111011</span>
+<span class="o">~</span><span class="nb">bin</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">11111100</span>
+</pre></div>
+</div>
+<p>Then we would do our addition from before:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="mi">111111</span>
+  <span class="mi">00001101</span>
+<span class="o">+</span> <span class="mi">11111100</span>
+<span class="o">--------------</span>
+ <span class="mi">100001001</span>
+</pre></div>
+</div>
+<p>Which when interpreted in base ten is 265. If we take the last 8 bits of the
+result we get: <code class="docutils literal notranslate"><span class="pre">00001001</span> <span class="pre">=</span> <span class="pre">9</span></code>. We know to take the last 8 bits because that is
+the bit width of the integers.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="low-level-computation.html" class="btn btn-neutral float-right" title="Low Level Computation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Principles of Performance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Joe Jevnik
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

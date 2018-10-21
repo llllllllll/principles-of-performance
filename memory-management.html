@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Memory Management &mdash; principles-of-performance  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to Optimize Code" href="how-to-optimize-code.html" />
+    <link rel="prev" title="Memory Locality" href="memory-locality.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> principles-of-performance
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bits.html">Bits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low-level-computation.html">Low Level Computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-locality.html">Memory Locality</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Memory Management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#virtual-memory">Virtual Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#two-tiers-of-allocation">Two Tiers of Allocation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-optimize-code.html">How to Optimize Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-overview.html">Python Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy-overview.html">Numpy Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">principles-of-performance</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Memory Management</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/memory-management.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="memory-management">
+<h1>Memory Management<a class="headerlink" href="#memory-management" title="Permalink to this headline">¶</a></h1>
+<p>When dealing with memory, one of the things to do is keep track of which memory
+is in use at any given time. Basically, when a program decides that it would
+like to store some data, it needs to find a region in memory large enough to
+store the given value or values, but is not currently being used to store a
+value that we would like to read later. The term for this problem is
+<a class="reference internal" href="appendix.html#memory-management"><span class="std std-ref">“memory management”</span></a>, and it is broken into two
+related parts:</p>
+<ul class="simple">
+<li><a class="reference internal" href="appendix.html#allocation"><span class="std std-ref">allocation</span></a>: reserving a region in memory for use</li>
+<li><a class="reference internal" href="appendix.html#deallocation"><span class="std std-ref">deallocation</span></a>: marking that a formerly allocated region
+is now again free to be used for a future allocation. This is also called
+“freeing memory”.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There are many techniques for tracking this information with different
+performance trade-offs, for the rest of this content we will treat all
+allocators (algorithms for managing allocated and freed memory) as
+equivalent.</p>
+</div>
+<div class="section" id="virtual-memory">
+<h2>Virtual Memory<a class="headerlink" href="#virtual-memory" title="Permalink to this headline">¶</a></h2>
+<p>So far we have been discussing programs as though they are the only things
+running; however, modern computers allow many programs to be run seemingly at
+the same time. In order to prevent programs from reading or writing memory in
+use by another program, modern CPUs support a feature called <a class="reference internal" href="appendix.html#virtual-memory"><span class="std std-ref">“virtual
+memory”</span></a>. The way virtual memory works is a device intercepts
+every memory read or write coming from the program and remaps it to a different
+address in the physical <a class="reference internal" href="appendix.html#main-memory"><span class="std std-ref">main memory</span></a> or <a class="reference internal" href="appendix.html#cache"><span class="std std-ref">processor
+cache</span></a>. This device is referred to as an <a class="reference internal" href="appendix.html#mmu"><span class="std std-ref">“MMU”</span></a>, which
+stands for “Memory Management Unit”. Nowadays, this device is built directly
+into the CPU itself as they are deeply ingrained.</p>
+<p>The operating system issues instructions that tell the <a class="reference internal" href="appendix.html#mmu"><span class="std std-ref">MMU</span></a> which virtual
+memory space the program will be operating in. Once that is done the operating
+moves the <a class="reference internal" href="appendix.html#instruction-pointer"><span class="std std-ref">instruction pointer</span></a> to the program and
+your program begins executing. The <a class="reference internal" href="appendix.html#mmu"><span class="std std-ref">MMU</span></a> will prevent the program from
+reading any address which the program has not been assigned, and will issue a
+hardware fault, which brings execution back to the operating system, if an
+invalid memory access occurs. This is what prevents any random program from
+reading your browser’s memory to steal your password. The <a class="reference internal" href="appendix.html#mmu"><span class="std std-ref">MMU</span></a> can also be
+used to enforce read only or no execute (memory cannot be used to store
+instructions) on given regions of memory.</p>
+<p>Due to virtual memory, two programs running at the same time on the same machine
+may believe that they have been given the same <a class="reference internal" href="appendix.html#address"><span class="std std-ref">address</span></a>. The <a class="reference internal" href="appendix.html#mmu"><span class="std std-ref">MMU</span></a> will know that process <span class="math notranslate nohighlight">\(A\)</span> address <span class="math notranslate nohighlight">\(N\)</span>
+maps to physical address <span class="math notranslate nohighlight">\(P\)</span>, but process <span class="math notranslate nohighlight">\(B\)</span> address <span class="math notranslate nohighlight">\(N\)</span> maps
+to some different physical address <span class="math notranslate nohighlight">\(Q\)</span>.</p>
+</div>
+<div class="section" id="two-tiers-of-allocation">
+<h2>Two Tiers of Allocation<a class="headerlink" href="#two-tiers-of-allocation" title="Permalink to this headline">¶</a></h2>
+<p>Because processes can only access the memory that the <a class="reference internal" href="appendix.html#mmu"><span class="std std-ref">MMU</span></a> and operating
+system have given it, the program needs some way of requesting memory from the
+operating system. Every operating system exposes this functionality to programs
+in some way. It is expensive to switch execution between the program and the
+operating system, so often programs request large blocks of memory at once. The
+program will then implement it’s own <a class="reference internal" href="appendix.html#allocation"><span class="std std-ref">allocation</span></a> algorithm to
+distribute this memory as it needs.</p>
+<p>When the process requests a large block of memory to distribute internally, it
+may not release that right away. Just like <a class="reference internal" href="appendix.html#allocation"><span class="std std-ref">allocation</span></a>,
+<a class="reference internal" href="appendix.html#deallocation"><span class="std std-ref">deallocation</span></a> requires telling the operating system and
+<a class="reference internal" href="appendix.html#mmu"><span class="std std-ref">MMU</span></a> that the process is done with the memory. This is similarly
+expensive to allocation. Therefore, processes often defer this if possible. This
+can make it very difficult to tell how much memory a complicated program like
+Python or R is using.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="how-to-optimize-code.html" class="btn btn-neutral float-right" title="How to Optimize Code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="memory-locality.html" class="btn btn-neutral" title="Memory Locality" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Joe Jevnik
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

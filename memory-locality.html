@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Memory Locality &mdash; principles-of-performance  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Memory Management" href="memory-management.html" />
+    <link rel="prev" title="Arrays and Structs" href="arrays-and-structs.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> principles-of-performance
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bits.html">Bits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low-level-computation.html">Low Level Computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Memory Locality</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cache-hierarchy">Cache Hierarchy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#propagating-values">Propagating Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-impact">Performance Impact</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#multi-dimensional-arrays">Multi-Dimensional Arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="memory-management.html">Memory Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-optimize-code.html">How to Optimize Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-overview.html">Python Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy-overview.html">Numpy Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">principles-of-performance</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Memory Locality</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/memory-locality.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="memory-locality">
+<h1>Memory Locality<a class="headerlink" href="#memory-locality" title="Permalink to this headline">¶</a></h1>
+<p>The way objects are arranged in memory can have a dramatic impact on the
+performance of a program. This is because, somewhat surprisingly, not all memory
+accesses are equivalent. Putting related data near each other in memory is
+very convenient as a programmer, like with <a class="reference internal" href="appendix.html#array"><span class="std std-ref">arrays</span></a> and
+<a class="reference internal" href="appendix.html#struct"><span class="std std-ref">structs</span></a>; therefore, hardware has been optimized for this use
+case.</p>
+<div class="section" id="cache-hierarchy">
+<h2>Cache Hierarchy<a class="headerlink" href="#cache-hierarchy" title="Permalink to this headline">¶</a></h2>
+<p>Remember, electricity can move about 1 foot in a nanosecond, so as we add more
+and more physical locations to store memory, the device grows in size and
+complexity so it takes more time to access the memory. The solution to this is
+simply to maintain smaller copies of the memory closer to, or on the CPU
+itself. Putting the data physically closer makes them <em>much</em> faster to access
+than normal memory.</p>
+<p>The names for these caches start with <code class="docutils literal notranslate"><span class="pre">L1</span></code>, which is the smallest and fastest
+level, and grow upwards like <code class="docutils literal notranslate"><span class="pre">L2</span></code> and <code class="docutils literal notranslate"><span class="pre">L3</span></code>. Most computers only have 2 or 3
+levels total. There is also a special term <a class="reference internal" href="appendix.html#ll"><span class="std std-ref">LL</span></a> which refers to the largest
+and slowest level, regardless of how many levels exist on the particular device.</p>
+<p>For example, on an Intel Core i7-6600U, there are 3 cache levels:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">L1</span></code>: 64KiB (split 32K data and 32K instructions)</li>
+<li><code class="docutils literal notranslate"><span class="pre">L2</span></code>: 256KiB</li>
+<li><code class="docutils literal notranslate"><span class="pre">L3</span></code>: 4096KiB</li>
+</ul>
+<p>This is expected to be a very small fraction of the total <a class="reference internal" href="appendix.html#main-memory"><span class="std std-ref">main memory</span></a>. On my computer, I have 16GiB of <a class="reference internal" href="appendix.html#main-memory"><span class="std std-ref">main memory</span></a>, which means that, as a fraction of my total memory, the levels
+can store:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">L1</span></code>: <span class="math notranslate nohighlight">\(1/262144\)</span></li>
+<li><code class="docutils literal notranslate"><span class="pre">L2</span></code>: <span class="math notranslate nohighlight">\(1/65536\)</span></li>
+<li><code class="docutils literal notranslate"><span class="pre">L3</span></code>: <span class="math notranslate nohighlight">\(1/4096\)</span></li>
+</ul>
+<div class="section" id="propagating-values">
+<h3>Propagating Values<a class="headerlink" href="#propagating-values" title="Permalink to this headline">¶</a></h3>
+<p>The way the cache works is that instead of reading memory in units of one byte,
+memory actually gets read in larger chunks called a <a class="reference internal" href="appendix.html#cache-line"><span class="std std-ref">“cache line”</span></a>. Modern processor use a cache line size of 64 bytes, or some power
+of 2 around that size. Whenever you want to read data, you actually grab the
+value along with a little bit of the data around it.</p>
+<p>For example, assuming a cache line size of 8 bytes (instead of the normal 64),
+let’s say we want to read the yellow 2 byte value:</p>
+<img alt="_images/cache-0.png" src="_images/cache-0.png" />
+<p>In Instead of just moving this two byte value to the cache, we move the entire
+cache line that the value is in to the cache:</p>
+<img alt="_images/cache-1.png" src="_images/cache-1.png" />
+<p>Notice that this doesn’t pull evenly from both sides of the value, instead, it
+just treats each multiple of the cache line size as one atomic unit.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Remember when we defined the struct:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="n">int32</span> <span class="n">a</span><span class="p">;</span>
+    <span class="n">int8</span> <span class="n">b</span><span class="p">;</span>
+    <span class="n">int16</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="last">The 6th byte was unused for performance reasons. One reason to keep the
+values aligned, is that you don’t want to run the risk of having the two
+bytes of <code class="docutils literal notranslate"><span class="pre">c</span></code> in different cache lines.</p>
+</div>
+</div>
+<div class="section" id="performance-impact">
+<h3>Performance Impact<a class="headerlink" href="#performance-impact" title="Permalink to this headline">¶</a></h3>
+<p>To show the impact first hand, you can time a simple function which loops
+through an array touching every element in different orders.</p>
+<p>On my Intel Core i7-6600U, touching 1000000 int64 (8 byte values) takes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-------------------------------------------------------------------</span>
+<span class="n">Benchmark</span>                            <span class="n">Time</span>           <span class="n">CPU</span> <span class="n">Iterations</span>
+<span class="o">-------------------------------------------------------------------</span>
+<span class="n">bench_random_access</span>           <span class="mi">49937987</span> <span class="n">ns</span>   <span class="mi">49752328</span> <span class="n">ns</span>         <span class="mi">15</span>
+<span class="n">bench_forward_linear_access</span>   <span class="mi">12688049</span> <span class="n">ns</span>   <span class="mi">12675668</span> <span class="n">ns</span>         <span class="mi">55</span>
+<span class="n">bench_reverse_linear_access</span>   <span class="mi">13032238</span> <span class="n">ns</span>   <span class="mi">13019142</span> <span class="n">ns</span>         <span class="mi">54</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This timing does not include the generation of the random numbers. The source
+is in <code class="docutils literal notranslate"><span class="pre">benchmarks/c++/bench/memory_order.cc</span></code>.</p>
+</div>
+<p>This shows that traversing a real array in random order is almost 5 times slower
+than traversing the <em>same array</em> in linear order.</p>
+</div>
+</div>
+<div class="section" id="multi-dimensional-arrays">
+<h2>Multi-Dimensional Arrays<a class="headerlink" href="#multi-dimensional-arrays" title="Permalink to this headline">¶</a></h2>
+<p>Remember that we have some choices for how we lay out multi-dimensional arrays
+in memory. For 2d arrays, we can either use:</p>
+<p>Row Order:</p>
+<img alt="_images/row-order.png" src="_images/row-order.png" />
+<p>Column Order:</p>
+<img alt="_images/column-order.png" src="_images/column-order.png" />
+<p>As you can see, this affects which values are closer to each other in memory,
+which we now know affects performance.</p>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Given a 2d array of shape (10000, 10000), think about which orientation would be
+best for:</p>
+<ul class="simple">
+<li>sum the columns (sum along axis 0)</li>
+<li>sum the rows (sum along axis 1)</li>
+<li>sum the whole array</li>
+</ul>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="gp">In [2]: </span><span class="n">row_major</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">))</span>
+
+<span class="gp">In [3]: </span><span class="n">column_major</span> <span class="o">=</span> <span class="n">row_major</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+
+<span class="gp">In [4]: </span><span class="o">%</span><span class="k">timeit</span> row_major.sum(axis=0)
+<span class="go">60.8 ms ± 984 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)</span>
+
+<span class="gp">In [5]: </span><span class="o">%</span><span class="k">timeit</span> row_major.sum(axis=1)
+<span class="go">44.9 ms ± 431 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)</span>
+
+<span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> column_major.sum(axis=0)
+<span class="go">47.4 ms ± 2.26 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)</span>
+
+<span class="gp">In [7]: </span><span class="o">%</span><span class="k">timeit</span> column_major.sum(axis=1)
+<span class="go">61.3 ms ± 460 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)</span>
+
+<span class="gp">In [8]: </span><span class="o">%</span><span class="k">timeit</span> row_major.sum()
+<span class="go">42.9 ms ± 417 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)</span>
+
+<span class="gp">In [9]: </span><span class="o">%</span><span class="k">timeit</span> column_major.sum()
+<span class="go">42.1 ms ± 304 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="memory-management.html" class="btn btn-neutral float-right" title="Memory Management" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="arrays-and-structs.html" class="btn btn-neutral" title="Arrays and Structs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Joe Jevnik
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

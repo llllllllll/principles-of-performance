@@ -1,0 +1,352 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>How to Optimize Code &mdash; principles-of-performance  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Python Overview" href="python-overview.html" />
+    <link rel="prev" title="Memory Management" href="memory-management.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> principles-of-performance
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bits.html">Bits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low-level-computation.html">Low Level Computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-locality.html">Memory Locality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-management.html">Memory Management</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to Optimize Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#algorithmic-complexity">Algorithmic Complexity</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reality-check">Reality Check</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#allocations-and-copies">Allocations and Copies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-fastest-operation">The Fastest Operation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="python-overview.html">Python Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy-overview.html">Numpy Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">principles-of-performance</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>How to Optimize Code</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/how-to-optimize-code.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-to-optimize-code">
+<h1>How to Optimize Code<a class="headerlink" href="#how-to-optimize-code" title="Permalink to this headline">¶</a></h1>
+<p>When considering the performance of code, the things to worry about in order of
+importance:</p>
+<ol class="arabic simple">
+<li>Algorithmic complexity.</li>
+<li>Allocations and copies.</li>
+<li>Memory access and cache performance.</li>
+<li>Number of instructions.</li>
+</ol>
+<p>Most programs will achieve acceptable performance by only considering the first
+two points, however, when doing computationally intensive tasks like the numeric
+programming required for quantitative finance, the 3rd and 4th point may become
+important.</p>
+<div class="section" id="algorithmic-complexity">
+<h2>Algorithmic Complexity<a class="headerlink" href="#algorithmic-complexity" title="Permalink to this headline">¶</a></h2>
+<p>Algorithmic complexity is a measure of the relationship between input size and
+computation time.</p>
+<blockquote>
+<div><p><em>Big-O: how code slows as data grows.</em></p>
+<p>Ned Batchelder</p>
+</div></blockquote>
+<p>The common technique for describing the time complexity of an algorithm is to
+compute the <em>worst case</em> performance of an algorithm. The standard way to
+communicate the worst case performance is through “Big O Notation”.</p>
+<p>The intuition is to count the number of operations that happen for every
+element of the input. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">needle</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">haystack</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">needle</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<p>In this example, for each element in <code class="docutils literal notranslate"><span class="pre">haystack</span></code>, we will perform 1 comparison,
+meaning there is a linear relationship between the time spent in <code class="docutils literal notranslate"><span class="pre">contains</span></code> and
+the length of <code class="docutils literal notranslate"><span class="pre">haystack</span></code>. This means that <code class="docutils literal notranslate"><span class="pre">contains</span></code> is <span class="math notranslate nohighlight">\(O(n)\)</span> with
+relation to <code class="docutils literal notranslate"><span class="pre">haystack</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">contains_sorted</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">needle</span><span class="p">):</span>
+   <span class="k">while</span> <span class="n">haystack</span><span class="p">:</span>
+       <span class="n">mid_ix</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">haystack</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+       <span class="n">midpoint</span> <span class="o">=</span> <span class="n">haystack</span><span class="p">[</span><span class="n">mid_ix</span><span class="p">]</span>
+       <span class="k">if</span> <span class="n">midpoint</span> <span class="o">==</span> <span class="n">needle</span><span class="p">:</span>
+           <span class="k">return</span> <span class="bp">True</span>
+       <span class="k">if</span> <span class="n">midpoint</span> <span class="o">&lt;</span> <span class="n">needle</span><span class="p">:</span>
+           <span class="n">haystack</span> <span class="o">=</span> <span class="n">haystack</span><span class="p">[</span><span class="n">mid_ix</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+       <span class="k">else</span><span class="p">:</span>
+           <span class="n">haystack</span> <span class="o">=</span> <span class="n">haystack</span><span class="p">[:</span><span class="n">mid_ix</span><span class="p">]</span>
+   <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<p>In this example, we cut the size of the <code class="docutils literal notranslate"><span class="pre">haystack</span></code> list in half in each step
+of the loop. This means that for a needle size of 16, in the worst case (the
+value is not in the haystack), we will operate on 16, 8, 4, 2, 1 values. This
+means we had 5 operations for 16 inputs. If we check 32, we will get 32, 16, 8,
+4, 2, 1, or 6 operations. This function actually scales logarithmically with the
+size of <code class="docutils literal notranslate"><span class="pre">haystack</span></code>. This means that <code class="docutils literal notranslate"><span class="pre">contains_sorted</span></code> is <span class="math notranslate nohighlight">\(O(ln(n))\)</span> with
+relation to <code class="docutils literal notranslate"><span class="pre">haystack</span></code>.</p>
+<p>The second function requires that the input is pre-sorted, but will perform much
+better for large <code class="docutils literal notranslate"><span class="pre">haystacks</span></code> given that constraint.</p>
+<div class="section" id="reality-check">
+<h3>Reality Check<a class="headerlink" href="#reality-check" title="Permalink to this headline">¶</a></h3>
+<p>Algorithmic complexity is a good tool for quickly evaluating how an algorithm
+will scale as the data <strong>approaches infinity</strong>. However, in the real world, we
+are often working with finite data sets (even big data is finite). When working
+with finite data, it is important to remember the constants that get erased and
+the derivative of the scaling function.</p>
+<p>For example, here are three functions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f0</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">f3</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+    <span class="c1"># slow down, the data isn&#39;t going anywhere</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first function performs one operation, pass, per element. Therefore this
+function is linear. The second function performs 2 operations per element by
+looping twice so it is also linear. The third function performs 0 operations per
+element, so it has constant time scaling. This function will run in the same
+time regardless of the size of the input. However, the constant speed is 100
+seconds, which may very well be slower than the linear solution for “small”
+<code class="docutils literal notranslate"><span class="pre">xs</span></code>.</p>
+<p>This plot shows a linear function, a logarithmic function, and a quadratic
+function. Because of the particulars of these functions, the quadratic function
+would be faster until around 600 elements. If the expected input size was less
+than 600, then the quadratic algorithm would actually be the best choice!</p>
+<p>(<a class="reference external" href=".//how-to-optimize-code-1.py">Source code</a>, <a class="reference external" href=".//how-to-optimize-code-1.png">png</a>, <a class="reference external" href=".//how-to-optimize-code-1.hires.png">hires.png</a>, <a class="reference external" href=".//how-to-optimize-code-1.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="_images/how-to-optimize-code-1.png" src="_images/how-to-optimize-code-1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="allocations-and-copies">
+<h2>Allocations and Copies<a class="headerlink" href="#allocations-and-copies" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="appendix.html#allocation"><span class="std std-ref">Memory allocations</span></a> can be very expensive. Allocating memory
+is itself potentially expensive because of the interaction with the operating
+system as well as the book keeping needed to track the newly allocated
+memory. The other, less obvious reason why allocations are bad is that it
+further spreads your data across more distinct addresses meaning you will get
+worse cache locality with the data.</p>
+<p>Copies have all of the problems as allocations with the addition of an
+<span class="math notranslate nohighlight">\(O(n)\)</span> operation to traverse the values being copied. Scanning a large
+region of memory can evict the entire working set from the <a class="reference internal" href="appendix.html#l1"><span class="std std-ref">L1</span></a> cache
+because it is touching a lot of memory at once.</p>
+<p>This isn’t to say that you shouldn’t allocate any memory. Programs sometimes
+need to store there results in new allocations; however, be careful about it.</p>
+</div>
+<div class="section" id="the-fastest-operation">
+<h2>The Fastest Operation<a class="headerlink" href="#the-fastest-operation" title="Permalink to this headline">¶</a></h2>
+<p>One of the most important tricks is to note that the fastest operation you can
+do is nothing. If you are struggling to improve the performance of some code,
+step back and think, “do I need to be doing this at all”. It can be easy to fall
+into the trap of optimizing a an algorithm as it exists, which may only be a
+locally optimal solution, when the globally optimal solution is to just call the
+function less times, or not at all.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="python-overview.html" class="btn btn-neutral float-right" title="Python Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="memory-management.html" class="btn btn-neutral" title="Memory Management" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Joe Jevnik
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

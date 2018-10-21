@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Low Level Computation &mdash; principles-of-performance  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Arrays and Structs" href="arrays-and-structs.html" />
+    <link rel="prev" title="Bits" href="bits.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> principles-of-performance
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bits.html">Bits</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Low Level Computation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#main-memory">Main Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#computation-circuits">Computation Circuits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bitness">Bitness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sequencing-low-level-operations">Sequencing Low Level Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#encoding-operations-as-numbers">Encoding Operations as Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#telling-the-computer-where-the-program-is">Telling the Computer Where the Program Is</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-locality.html">Memory Locality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-management.html">Memory Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-optimize-code.html">How to Optimize Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-overview.html">Python Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy-overview.html">Numpy Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">principles-of-performance</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Low Level Computation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/low-level-computation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="low-level-computation">
+<h1>Low Level Computation<a class="headerlink" href="#low-level-computation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="main-memory">
+<h2>Main Memory<a class="headerlink" href="#main-memory" title="Permalink to this headline">¶</a></h2>
+<p>The memory of a computer is an ordered sequence of bits, which is broken up into
+small fixed sized pieces called <a class="reference internal" href="appendix.html#byte"><span class="std std-ref">“bytes”</span></a>. A <a class="reference internal" href="appendix.html#byte"><span class="std std-ref">byte</span></a> is
+the smallest addressable unit of bits. This is eight <a class="reference internal" href="appendix.html#bit"><span class="std std-ref">bits</span></a>, except
+for very old computers or some specialty devices. These <a class="reference internal" href="appendix.html#byte"><span class="std std-ref">bytes</span></a> are
+laid out as a flat sequence which are named according to their index. When
+discussing memory, an index is called an <a class="reference internal" href="appendix.html#address"><span class="std std-ref">“address”</span></a>. To
+<a class="reference internal" href="appendix.html#dereference"><span class="std std-ref">“dereference”</span></a> an address is to read the value stored at
+that address.</p>
+<img alt="_images/memory-cells.png" src="_images/memory-cells.png" />
+</div>
+<div class="section" id="computation-circuits">
+<h2>Computation Circuits<a class="headerlink" href="#computation-circuits" title="Permalink to this headline">¶</a></h2>
+<p>A general purpose computer can perform many different tasks, even tasks not
+known when the device was built. To do this, the computer has many small
+computation circuits that implement very low level functions, for example: add
+two numbers together. Using “add” as an example, at a high level this circuit
+will take two numbers and produce the sum. To do that, it needs a physical
+location to store the input bits and the output bits. These circuits take up
+physical space and material so it would be prohibitively expensive to build
+custom hardware to special case adding every address to every other address
+(quadratic in the number of addresses). This problem is magnified by the desire
+to perform many operations, like subtract, multiply, and probably others. To
+reduce the number of specific circuits needed, the computer provides a small set
+of locations to read and write data and provides operations for moving data from
+<a class="reference internal" href="appendix.html#main-memory"><span class="std std-ref">main memory</span></a> to and from these standard locations. These
+locations are individually called <a class="reference internal" href="appendix.html#register"><span class="std std-ref">“registers”</span></a>. For example,
+the <code class="docutils literal notranslate"><span class="pre">add</span></code> implementation for a 3 <a class="reference internal" href="appendix.html#register"><span class="std std-ref">register</span></a> machine would
+require 9 adder circuits, where one of the inputs gets overwritten with the
+output.</p>
+<img alt="The adder circuits needed for a three register machine." src="_images/adders.png" />
+</div>
+<div class="section" id="bitness">
+<h2>Bitness<a class="headerlink" href="#bitness" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="appendix.html#register"><span class="std std-ref">register</span></a> is not limited to a single byte. If it were, our
+memory space would be limited to <span class="math notranslate nohighlight">\(2^{8} = 256\)</span> bytes because that would be
+the largest address we could store in a single register. The number of bits in a
+register is the <a class="reference internal" href="appendix.html#bitness"><span class="std std-ref">“bitness”</span></a> of the machine. This is what it means
+when you see “64 bit processor” or “32 bit processor”.</p>
+<p>Increasing the bitness of the <a class="reference internal" href="appendix.html#register"><span class="std std-ref">registers</span></a> is advantageous
+because it means the machine has special circuits for operating on larger
+integers and it increases the total addressable memory space. For example, the
+theoretical size of the memory space is:</p>
+<ul class="simple">
+<li>8 bits: <span class="math notranslate nohighlight">\(2^{8} = 256\)</span> bytes</li>
+<li>16 bits: <span class="math notranslate nohighlight">\(2^{16} = 65536B = 64KiB\)</span></li>
+<li>32 bits: <span class="math notranslate nohighlight">\(2^{32} = 4294967296B = 4GiB\)</span></li>
+<li>64 bits: <span class="math notranslate nohighlight">\(2^{64} = 18446744073709551616B = 16EiB\)</span></li>
+</ul>
+<p>The downsides to increasing the bitness of the <a class="reference internal" href="appendix.html#register"><span class="std std-ref">registers</span></a> is
+that it requires physically more material and space to build. Electricity only moves
+about one foot in a nanosecond, so routing the electricity around a lot of
+physical space takes time. Making things smaller also makes them harder to keep
+cool enough to function properly. Another downside is that in exchange for a
+larger memory space, the size of every address goes up. This trade-off is okay
+if you actually have more memory, but can lead to some complications.</p>
+</div>
+<div class="section" id="sequencing-low-level-operations">
+<h2>Sequencing Low Level Operations<a class="headerlink" href="#sequencing-low-level-operations" title="Permalink to this headline">¶</a></h2>
+<p>Given our pile of bytes and very specific computation circuits, how can we
+perform useful computations? We need to first decompose our problem into these
+small atomic steps, and then instruct the computer which atomic steps we want to
+execute and in what order. To do this, we could either:</p>
+<ol class="arabic simple">
+<li>Build a custom circuit to sequence the low level circuits.</li>
+<li>Encode the steps as data and store the sequence in memory.</li>
+</ol>
+<p>The problem with option 1 is that we either need to know what function we want
+to perform when we build the hardware, or we would need some sort of mechanism
+for re-synthesizing the circuits after the device is built. There is actually a
+type of device that does this, called an FPGA (Field Programmable Gate Array),
+but that is not the option most modern general purpose computers use.</p>
+<p>Option two requires that we can encode all of the tasks we want into bits and
+get the computer to read them when we want.</p>
+<div class="section" id="encoding-operations-as-numbers">
+<h3>Encoding Operations as Numbers<a class="headerlink" href="#encoding-operations-as-numbers" title="Permalink to this headline">¶</a></h3>
+<p>A single encoded operation is referred to as an <a class="reference internal" href="appendix.html#instruction"><span class="std std-ref">“instruction”</span></a>. An instruction refers to both the function to perform paired
+with the arguments to act on.</p>
+<p>Encoding our low level operations as numbers is a reasonably straightforward
+task. Given that we have a finite number of atomic operations, we could just
+enumerate them and use the index as the value to store in memory. The downside
+with that technique is that it forces all instructions to be the same size,
+which means all instructions are as large as the largest possible
+instruction. In practice, not all instructions need the same amount of
+information. For example: <code class="docutils literal notranslate"><span class="pre">inc</span></code>, which increments a value by one, is composed
+of two parts:</p>
+<ol class="arabic simple">
+<li>Something to indicate that this is an <code class="docutils literal notranslate"><span class="pre">inc</span></code>.</li>
+<li>Something to denote which register should be incremented.</li>
+</ol>
+<p>Where <code class="docutils literal notranslate"><span class="pre">add</span></code> requires 3 pieces:</p>
+<ol class="arabic simple">
+<li>Something to indicate that this is an <code class="docutils literal notranslate"><span class="pre">add</span></code>.</li>
+<li>Something to denote the register to read the first addend from.</li>
+<li>Something to denote the register to read the second addend from. This
+register will then hold the result.</li>
+</ol>
+<p>In general, each instruction is encoded as an <a class="reference internal" href="appendix.html#opcode"><span class="std std-ref">“opcode”</span></a> followed
+by a variable amount of space depending on the number of arguments needed. The
+processor knows how many bytes to read after the opcode because the number of
+arguments is fixed for any particular opcode. For example, in some fictional
+encoding we could encode:</p>
+<div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="nf">inc</span> <span class="nv">%r1</span>
+<span class="nf">add</span> <span class="nv">%r2</span><span class="p">,</span> <span class="nv">%r3</span>
+</pre></div>
+</div>
+<p>as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">00000001</span> <span class="mi">00000001</span>
+ <span class="n">inc</span> <span class="o">=</span> <span class="mi">1</span>   <span class="n">r1</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="mi">00000010</span> <span class="mi">00000010</span> <span class="mi">00000011</span>
+ <span class="n">add</span> <span class="o">=</span> <span class="mi">2</span>   <span class="n">r2</span> <span class="o">=</span> <span class="mi">1</span>   <span class="n">r3</span> <span class="o">=</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p>Given the complexity of all of the operations modern X86-64 computers can
+perform, the actual encoding is very complicated and a single instruction can
+span anywhere from 1 byte to 15 bytes!</p>
+</div>
+<div class="section" id="telling-the-computer-where-the-program-is">
+<h3>Telling the Computer Where the Program Is<a class="headerlink" href="#telling-the-computer-where-the-program-is" title="Permalink to this headline">¶</a></h3>
+<p>So we can now encode a computation as a series of atomic steps that our computer
+can execute, but how does the computer read that?</p>
+<p>When the computer launches, there is a small program hard coded into the device
+that reads some startup code from your persistent storage and loads it into
+memory at a known location. The processor then knows to read instructions
+starting at this location and moving forward one instruction at a time. The
+computer stores the current <a class="reference internal" href="appendix.html#address"><span class="std std-ref">address</span></a> where the program is being
+read in a special <a class="reference internal" href="appendix.html#register"><span class="std std-ref">register</span></a> called the <a class="reference internal" href="appendix.html#instruction-pointer"><span class="std std-ref">“instruction
+pointer”</span></a>.</p>
+<p>The general execution flow for a program is:</p>
+<ol class="arabic simple">
+<li><a class="reference internal" href="appendix.html#dereference"><span class="std std-ref">Dereference</span></a> the <a class="reference internal" href="appendix.html#instruction-pointer"><span class="std std-ref">instruction pointer</span></a>.</li>
+<li>Parse the given <a class="reference internal" href="appendix.html#instruction"><span class="std std-ref">instruction</span></a> by reading the <a class="reference internal" href="appendix.html#opcode"><span class="std std-ref">opcode</span></a> and any arguments.</li>
+<li>Execute the <a class="reference internal" href="appendix.html#instruction"><span class="std std-ref">instruction</span></a>.</li>
+<li>Increment the <a class="reference internal" href="appendix.html#instruction-pointer"><span class="std std-ref">instruction pointer</span></a> by the size of
+the <a class="reference internal" href="appendix.html#instruction"><span class="std std-ref">instruction</span></a>..</li>
+<li>Go to step 1.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There are cases where step 4 is altered or skipped. This happens when the
+instruction itself changes the instruction pointer.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="arrays-and-structs.html" class="btn btn-neutral float-right" title="Arrays and Structs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="bits.html" class="btn btn-neutral" title="Bits" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Joe Jevnik
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

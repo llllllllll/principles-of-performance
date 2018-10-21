@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Appendix &mdash; principles-of-performance  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Profiling" href="profiling.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> principles-of-performance
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bits.html">Bits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low-level-computation.html">Low Level Computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-locality.html">Memory Locality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-management.html">Memory Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-optimize-code.html">How to Optimize Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-overview.html">Python Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy-overview.html">Numpy Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Appendix</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#processor">Processor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cpu">CPU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mmu">MMU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#virtual-memory">Virtual Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#x86">x86</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">CPU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instruction">Instruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instruction-pointer">Instruction Pointer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opcode">Opcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#register">Register</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bitness">Bitness</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#word-size">Word Size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mov"><code class="docutils literal notranslate"><span class="pre">mov</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#memory">Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bit">Bit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#byte">Byte</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-management">Memory Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#allocation">Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deallocation">Deallocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#address">Address</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pointer">Pointer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dereference">Dereference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integer-width">Integer Width</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main-memory">Main Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#processor-cache">Processor Cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ll"><code class="docutils literal notranslate"><span class="pre">LL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cache-line">Cache Line</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-structures">Data Structures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#array">Array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#struct">Struct</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#miscellaneous">Miscellaneous</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#object">Object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#profiler">Profiler</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">principles-of-performance</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Appendix</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/appendix.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="appendix">
+<h1>Appendix<a class="headerlink" href="#appendix" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="processor">
+<h2>Processor<a class="headerlink" href="#processor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cpu">
+<span id="id1"></span><h3>CPU<a class="headerlink" href="#cpu" title="Permalink to this headline">¶</a></h3>
+<p>The CPU is the device that physically executes <a class="reference internal" href="#instruction"><span class="std std-ref">instructions</span></a>
+to perform computation.</p>
+</div>
+<div class="section" id="mmu">
+<span id="id2"></span><h3>MMU<a class="headerlink" href="#mmu" title="Permalink to this headline">¶</a></h3>
+<p>The MMU which stands for “Memory Management Unit”. Nowadays, is a component that
+intercepts every memory read or write coming from the program and remaps it from
+the <a class="reference internal" href="#virtual-memory"><span class="std std-ref">virtual address</span></a> to the physical <a class="reference internal" href="#main-memory"><span class="std std-ref">main memory</span></a> or <a class="reference internal" href="#cache"><span class="std std-ref">processor cache</span></a>. The MMU is also responsible
+for enforcing that programs only access the memory they have been given so that
+programs do not use other program’s memory.</p>
+</div>
+<div class="section" id="virtual-memory">
+<span id="id3"></span><h3>Virtual Memory<a class="headerlink" href="#virtual-memory" title="Permalink to this headline">¶</a></h3>
+<p>Virtual memory is a way of isolating the memory used by different programs
+running on the same machine at the same time. Basically, each program sees a
+subset of total memory available on the machine. The process can only read or
+write address inside this space.</p>
+</div>
+<div class="section" id="x86">
+<span id="id4"></span><h3>x86<a class="headerlink" href="#x86" title="Permalink to this headline">¶</a></h3>
+<p>By far the most common instruction set architecture for personal computers and
+servers. The instruction set architecture defines which <a class="reference internal" href="#instruction"><span class="std std-ref">instructions</span></a> exist for the machine.</p>
+</div>
+<div class="section" id="id5">
+<h3>CPU<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>The CPU is the device that reads <a class="reference internal" href="#instruction"><span class="std std-ref">instructions</span></a>, interprets
+the meaning, and performs the given computation. This is the component of the
+computer that implements all of the logic.</p>
+</div>
+<div class="section" id="instruction">
+<span id="id6"></span><h3>Instruction<a class="headerlink" href="#instruction" title="Permalink to this headline">¶</a></h3>
+<p>A single low level step that the computer can execute. This is the pair of the
+operation along with the arguments to the operation.</p>
+</div>
+<div class="section" id="instruction-pointer">
+<span id="id7"></span><h3>Instruction Pointer<a class="headerlink" href="#instruction-pointer" title="Permalink to this headline">¶</a></h3>
+<p>A special <a class="reference internal" href="#register"><span class="std std-ref">register</span></a> which stores the <a class="reference internal" href="#address"><span class="std std-ref">address</span></a>
+of the next instruction to execute. The programmer cannot directly manipulate
+this register.</p>
+</div>
+<div class="section" id="opcode">
+<span id="id8"></span><h3>Opcode<a class="headerlink" href="#opcode" title="Permalink to this headline">¶</a></h3>
+<p>A particular operation that the computer can execute decoupled from the
+arguments. For example <code class="docutils literal notranslate"><span class="pre">add</span></code> or <code class="docutils literal notranslate"><span class="pre">sub</span></code>.</p>
+</div>
+<div class="section" id="register">
+<span id="id9"></span><h3>Register<a class="headerlink" href="#register" title="Permalink to this headline">¶</a></h3>
+<p>A location to store a small value while performing operations. Except for
+<a class="reference internal" href="#mov"><span class="std std-ref">mov</span></a>, most <a class="reference internal" href="#instruction"><span class="std std-ref">instructions</span></a> take registers for all inputs
+and outputs. Registers live on the <a class="reference internal" href="#cpu"><span class="std std-ref">CPU</span></a> itself, not in <a class="reference internal" href="#main-memory"><span class="std std-ref">memory</span></a>.</p>
+</div>
+<div class="section" id="bitness">
+<span id="id10"></span><h3>Bitness<a class="headerlink" href="#bitness" title="Permalink to this headline">¶</a></h3>
+<p>The number of bits in a value.</p>
+</div>
+<div class="section" id="word-size">
+<span id="id11"></span><h3>Word Size<a class="headerlink" href="#word-size" title="Permalink to this headline">¶</a></h3>
+<p>The word size is the size of a <a class="reference internal" href="#register"><span class="std std-ref">register</span></a> on the
+machine. However, “word” is often overloaded to mean 16 bit value. This comes
+from the fact that the original <a class="reference internal" href="#x86"><span class="std std-ref">x86</span></a> processors were 16 bit. This is the
+root of the terms:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">dword</span></code>: double word, 32 bit value</li>
+<li><code class="docutils literal notranslate"><span class="pre">qword</span></code>: quadruple word, 64 bit value</li>
+</ul>
+</div>
+<div class="section" id="mov">
+<span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">mov</span></code><a class="headerlink" href="#mov" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">mov</span></code> is the <a class="reference internal" href="#instruction"><span class="std std-ref">instruction</span></a> that can load data from
+<a class="reference internal" href="#main-memory"><span class="std std-ref">memory</span></a> into a <a class="reference internal" href="#register"><span class="std std-ref">register</span></a> or write data
+from a <a class="reference internal" href="#register"><span class="std std-ref">register</span></a> back to <a class="reference internal" href="#main-memory"><span class="std std-ref">memory</span></a>.</p>
+</div>
+</div>
+<div class="section" id="memory">
+<h2>Memory<a class="headerlink" href="#memory" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="bit">
+<span id="id13"></span><h3>Bit<a class="headerlink" href="#bit" title="Permalink to this headline">¶</a></h3>
+<p>The most primitive unit for storing information, either true or false. Bits are
+often denoted using 1 for true or 0 for false.</p>
+</div>
+<div class="section" id="byte">
+<span id="id14"></span><h3>Byte<a class="headerlink" href="#byte" title="Permalink to this headline">¶</a></h3>
+<p>The smallest addressable number of <a class="reference internal" href="#bit"><span class="std std-ref">bits</span></a>. This is almost always
+eight bits.</p>
+</div>
+<div class="section" id="memory-management">
+<span id="id15"></span><h3>Memory Management<a class="headerlink" href="#memory-management" title="Permalink to this headline">¶</a></h3>
+<p>Memory management is tracking which <a class="reference internal" href="#address"><span class="std std-ref">addresses</span></a> are in use so
+that data is not overwritten while it is being used. This involves properly
+<a class="reference internal" href="#allocation"><span class="std std-ref">allocating</span></a> and <a class="reference internal" href="#deallocation"><span class="std std-ref">deallocating</span></a> memory.</p>
+</div>
+<div class="section" id="allocation">
+<span id="id16"></span><h3>Allocation<a class="headerlink" href="#allocation" title="Permalink to this headline">¶</a></h3>
+<p>To allocate memory is reserve a section of memory for some period of time.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>See Also</p>
+<p class="last"><a class="reference internal" href="#deallocation"><span class="std std-ref">Deallocation</span></a></p>
+</div>
+</div>
+<div class="section" id="deallocation">
+<span id="id17"></span><h3>Deallocation<a class="headerlink" href="#deallocation" title="Permalink to this headline">¶</a></h3>
+<p>To deallocate memory is to mark that previously <a class="reference internal" href="#allocation"><span class="std std-ref">allocated</span></a>
+region of memory is no longer needed and can be reused in the future.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>See Also</p>
+<p class="last"><a class="reference internal" href="#allocation"><span class="std std-ref">Allocation</span></a></p>
+</div>
+</div>
+<div class="section" id="address">
+<span id="id18"></span><h3>Address<a class="headerlink" href="#address" title="Permalink to this headline">¶</a></h3>
+<p>An address is an integer which corresponds to a location in <a class="reference internal" href="#main-memory"><span class="std std-ref">memory</span></a>.</p>
+</div>
+<div class="section" id="pointer">
+<span id="id19"></span><h3>Pointer<a class="headerlink" href="#pointer" title="Permalink to this headline">¶</a></h3>
+<p>A pointer is a value that stores a <a class="reference internal" href="#address"><span class="std std-ref">memory address</span></a>. This can
+either be the address of a single value, an <a class="reference internal" href="#array"><span class="std std-ref">array</span></a>, or a
+<a class="reference internal" href="#struct"><span class="std std-ref">struct</span></a>.</p>
+</div>
+<div class="section" id="dereference">
+<span id="id20"></span><h3>Dereference<a class="headerlink" href="#dereference" title="Permalink to this headline">¶</a></h3>
+<p>To “dereference” means to read the value stored at a particular <a class="reference internal" href="#address"><span class="std std-ref">address</span></a>. For example, given memory that looks like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">memory</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Dereferencing address 4 (0-indexed) would be: <code class="docutils literal notranslate"><span class="pre">memory[4]</span> <span class="pre">==</span> <span class="pre">5</span></code>.</p>
+</div>
+<div class="section" id="integer-width">
+<span id="bit-width"></span><h3>Integer Width<a class="headerlink" href="#integer-width" title="Permalink to this headline">¶</a></h3>
+<p>The fixed number of <a class="reference internal" href="#bit"><span class="std std-ref">bits</span></a> in an integer. The common widths for
+integers are: 8, 16, 32, and 64.</p>
+</div>
+<div class="section" id="main-memory">
+<span id="id21"></span><h3>Main Memory<a class="headerlink" href="#main-memory" title="Permalink to this headline">¶</a></h3>
+<p>Main memory, also just called “memory” or “RAM”, is ephemeral storage available
+to the processor for storing results of computations. This does not include
+persistent storage like hard drives.</p>
+</div>
+<div class="section" id="processor-cache">
+<span id="cache"></span><span id="l1"></span><h3>Processor Cache<a class="headerlink" href="#processor-cache" title="Permalink to this headline">¶</a></h3>
+<p>The processor cache is a series of caches that reside on the <a class="reference internal" href="#cpu"><span class="std std-ref">CPU</span></a>
+itself. These caches are arranged from smallest and fastest to access to largest
+and slowest to access. The common naming convention is:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">L1</span></code>: smallest and fastest</li>
+<li><code class="docutils literal notranslate"><span class="pre">L3</span></code> or <code class="docutils literal notranslate"><span class="pre">L4</span></code> (depending on CPU): largest and slowest</li>
+<li><code class="docutils literal notranslate"><span class="pre">LL</span></code>: Last Level, always refers to the last level regardless of how many
+levels exist.</li>
+</ul>
+<p>Often the <code class="docutils literal notranslate"><span class="pre">L1</span></code> cache is split into two distinct caches: one for instructions
+and one for data.</p>
+</div>
+<div class="section" id="ll">
+<span id="id22"></span><h3><code class="docutils literal notranslate"><span class="pre">LL</span></code><a class="headerlink" href="#ll" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">LL</span></code>, short for “Last Level”, always refers to the largest and slowest
+<a class="reference internal" href="#cache"><span class="std std-ref">memory cache</span></a> level for a given machine.</p>
+</div>
+<div class="section" id="cache-line">
+<span id="id23"></span><h3>Cache Line<a class="headerlink" href="#cache-line" title="Permalink to this headline">¶</a></h3>
+<p>A cache line is the unit of data transfer between <a class="reference internal" href="#main-memory"><span class="std std-ref">main memory</span></a> and the <a class="reference internal" href="#cache"><span class="std std-ref">processor cache</span></a>, or between levels of the
+cache. Instead of moving one byte at a time, movement is accelerated</p>
+</div>
+</div>
+<div class="section" id="data-structures">
+<h2>Data Structures<a class="headerlink" href="#data-structures" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="array">
+<span id="id24"></span><h3>Array<a class="headerlink" href="#array" title="Permalink to this headline">¶</a></h3>
+<p>An array is an ordered sequence of values. The defining characteristic of an
+array is that the values are laid out next to each other in <a class="reference internal" href="#main-memory"><span class="std std-ref">memory</span></a>. For example if the elements are 4 byte integers, and the first
+element has an address of <code class="docutils literal notranslate"><span class="pre">addr</span></code>, then the second element will have an address
+of <code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">+</span> <span class="pre">4</span></code>, the third element will have an address of <code class="docutils literal notranslate"><span class="pre">addr</span> <span class="pre">+</span> <span class="pre">8</span></code>, and so
+on. The address of element <code class="docutils literal notranslate"><span class="pre">n</span></code> of any array <code class="docutils literal notranslate"><span class="pre">a</span></code> is <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">sizeof(element)</span> <span class="pre">*</span>
+<span class="pre">n</span></code>. Element <code class="docutils literal notranslate"><span class="pre">n</span></code> of array <code class="docutils literal notranslate"><span class="pre">a</span></code> is often denoted as: <code class="docutils literal notranslate"><span class="pre">a[n]</span></code>.</p>
+</div>
+<div class="section" id="struct">
+<span id="id25"></span><h3>Struct<a class="headerlink" href="#struct" title="Permalink to this headline">¶</a></h3>
+<p>A struct, short for “structure”, is a fixed-size collection of potentially
+unrelated types. In a structure, the elements are laid out in a fixed order, for
+example, imagine the struct:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="n">int32</span> <span class="n">a</span>
+    <span class="n">int8</span> <span class="n">b</span><span class="p">;</span>
+    <span class="n">int16</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The bytes could be laid out like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>though, for alignment reasons it could also be laid out like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">padding</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>where padding is a wasted byte that serves to make the address of <code class="docutils literal notranslate"><span class="pre">c</span></code> a
+multiple of 2.</p>
+</div>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="object">
+<span id="id26"></span><h3>Object<a class="headerlink" href="#object" title="Permalink to this headline">¶</a></h3>
+<p>An object, in terms of object oriented programming, is a value paired with the
+set of operations that may be performed on the value.</p>
+</div>
+<div class="section" id="profiler">
+<span id="id27"></span><h3>Profiler<a class="headerlink" href="#profiler" title="Permalink to this headline">¶</a></h3>
+<p>A profiler is a tool that tracks the execution of a program to better understand
+the behavior and performance of the program.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="profiling.html" class="btn btn-neutral" title="Profiling" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Joe Jevnik
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

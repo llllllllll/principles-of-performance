@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Numpy Overview &mdash; principles-of-performance  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Profiling" href="profiling.html" />
+    <link rel="prev" title="Python Overview" href="python-overview.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> principles-of-performance
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bits.html">Bits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low-level-computation.html">Low Level Computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-locality.html">Memory Locality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-management.html">Memory Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-optimize-code.html">How to Optimize Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-overview.html">Python Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Numpy Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#ndarray"><code class="docutils literal notranslate"><span class="pre">ndarray</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dtype"><code class="docutils literal notranslate"><span class="pre">dtype</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shape">Shape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-buffer-and-strides">Memory Buffer and Strides</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#operations">Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#broadcasting">Broadcasting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#np-array-1-2-3-10"><code class="docutils literal notranslate"><span class="pre">np.array([1,</span> <span class="pre">2,</span> <span class="pre">3])</span> <span class="pre">+</span> <span class="pre">10</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#np-array-1-2-3-np-array-2-3-4"><code class="docutils literal notranslate"><span class="pre">np.array([1,</span> <span class="pre">2,</span> <span class="pre">3])</span> <span class="pre">*</span> <span class="pre">np.array([2,</span> <span class="pre">3,</span> <span class="pre">4])</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#np-array-1-2-3-np-array-2-4"><code class="docutils literal notranslate"><span class="pre">np.array([1,</span> <span class="pre">2,</span> <span class="pre">3])</span> <span class="pre">/</span> <span class="pre">np.array([2,</span> <span class="pre">4])</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#np-array-2-3-4-np-array-1-2-1-3"><code class="docutils literal notranslate"><span class="pre">np.array([2,</span> <span class="pre">3,</span> <span class="pre">4])</span> <span class="pre">**</span> <span class="pre">np.array([[1</span> <span class="pre">/</span> <span class="pre">2],</span> <span class="pre">[1</span> <span class="pre">/</span> <span class="pre">3]])</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">principles-of-performance</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Numpy Overview</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/numpy-overview.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="numpy-overview">
+<h1>Numpy Overview<a class="headerlink" href="#numpy-overview" title="Permalink to this headline">¶</a></h1>
+<p>Python <a class="reference internal" href="appendix.html#allocation"><span class="std std-ref">allocates</span></a> every object in the heap and only refers to
+them through a pointer, requiring that we do at least one <a class="reference internal" href="appendix.html#dereference"><span class="std std-ref">memory
+dereference</span></a> to access the value at all. Python also requires many
+dereferences to perform even simple operations like addition or
+multiplication. Both of these things are a massive drain on performance, so why
+does Python get used in performance sensitive fields like numerical computing?</p>
+<blockquote>
+<div><p><em>This is the paradox that we have to work with when we’re doing scientific or
+numerically-intensive Python. What makes Python fast for development – this
+high-level, interpreted, and dynamically-typed aspect of the language – is
+exactly what makes it slow for code execution.</em></p>
+<p>Jake VanderPlas, Losing Your Loops: Fast Numerical Computing with NumPy,
+PyCon 2015</p>
+</div></blockquote>
+<p>Numpy is a Python library which is built around a single core data structure,
+the <code class="docutils literal notranslate"><span class="pre">ndarray</span></code>, short for <em>N dimensional array</em>. This single data structure is
+what allows Python to be as fast or faster than other languages for doing
+numeric computing, even with all of the other downsides Python has.</p>
+<div class="section" id="ndarray">
+<h2><code class="docutils literal notranslate"><span class="pre">ndarray</span></code><a class="headerlink" href="#ndarray" title="Permalink to this headline">¶</a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> is composed of the following parts:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">dtype</span></code></li>
+<li>shape</li>
+<li>memory buffer</li>
+<li>strides</li>
+</ul>
+<div class="section" id="dtype">
+<h3><code class="docutils literal notranslate"><span class="pre">dtype</span></code><a class="headerlink" href="#dtype" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code></a>, short for “data type” is an object which represents
+the types of the elements to store in the array. For example,
+<code class="docutils literal notranslate"><span class="pre">np.dtype('int32')</span></code> represent 32 bit (4 byte) integers. Unlike a Python list,
+all elements of an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> must be the same type.</p>
+</div>
+<div class="section" id="shape">
+<h3>Shape<a class="headerlink" href="#shape" title="Permalink to this headline">¶</a></h3>
+<p>The shape is small array which represents the number of values along each
+axis. For example:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">(10,)</span></code>: 1-dimensional array of length 1</li>
+<li><code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">3)</span></code>: 2-dimensional array with 5 rows and 3 columns</li>
+<li><code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">4,</span> <span class="pre">6)</span></code>: 3-dimensional array</li>
+<li><code class="docutils literal notranslate"><span class="pre">()</span></code>: the empty sequence represents a scalar value, this comes up every so
+often but is not normally explicitly stated.</li>
+</ul>
+<p>Axes are named by their index in the shape. For 2-dimensional arrays, axis 0
+means rows and axis 1 means columns.</p>
+</div>
+<div class="section" id="memory-buffer-and-strides">
+<h3>Memory Buffer and Strides<a class="headerlink" href="#memory-buffer-and-strides" title="Permalink to this headline">¶</a></h3>
+<p>The memory buffer is a low-level <a class="reference internal" href="appendix.html#array"><span class="std std-ref">array</span></a> which holds the actual
+values for the array. This is deeply tied to the strides, which is an array
+representing the number of bytes needed to move one step along each axis. This
+is a generalization of the “row order” and “column order” layouts discussed
+earlier. It is possible to implement both row and column major orders by
+changing your data and strides. For example:</p>
+<p>Row Order:</p>
+<img alt="_images/row-order-strides.png" src="_images/row-order-strides.png" />
+<p>Column Order:</p>
+<img alt="_images/column-order-strides.png" src="_images/column-order-strides.png" />
+<p>The strides allow us to represent another very important concept, “strided
+views”. Imagine we have a 2d array in row major order, but we want to take a
+view over a particular column. By shifting the base pointer and playing with the
+strides, it is possible to create an array which produces the value for each
+column but doesn’t need to copy the data.</p>
+<img alt="_images/column-slice-strides.png" src="_images/column-slice-strides.png" />
+</div>
+</div>
+<div class="section" id="operations">
+<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this headline">¶</a></h2>
+<p>Just storing data efficiently is not that exciting by itself. What makes numpy
+very powerful is that it gives efficient operations that act on the
+array. Because the data in an <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> is both homogeneously typed
+and stored in a (usually) contiguous buffer, numpy can implement operations in a
+lower level language which optimize for memory access, cache utilization, and
+instruction count.</p>
+<p>Python features like iterators or <code class="docutils literal notranslate"><span class="pre">sum</span></code> helped optimize our loop because we
+could reduce the number of times we asked objects “how do you retrieve an
+element at an index?”. Because <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> objects hold
+homogeneously typed elements, we can ask “how do you do X operation with the
+given inputs” exactly once for the entire array. At this point, we can decide if
+the operation is valid and if it is, execute an optimized loop to perform that
+operation given the operands.</p>
+<p>For example, let’s look at “sum”. When summing a Python list of Python integers,
+we need to ask every into how to add itself to another int. At every step we
+need to re-check the operands and find the proper implementation of “add”. Also,
+we will need to <a class="reference internal" href="appendix.html#allocation"><span class="std std-ref">allocate</span></a> a new integer object for every
+intermediate sum. Using an <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, we already know up front
+that the elements are all the same type. If we try to sum, we would check once,
+“can elements of this dtype be added together?”. If they can, it would find the
+optimized implementation of “add” for the dtype once. Then it would jump into
+the loop and start performing the sum. Because numpy doesn’t need to keep all of
+it’s state with Python objects, it can re-use the memory storing the
+intermediate sum which further removes <a class="reference internal" href="appendix.html#allocation"><span class="std std-ref">allocations</span></a>.</p>
+<p>To show that this really adds up, let’s compare a Python dot product with
+numpy’s implementation of dot product:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [2]: </span><span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)]</span>
+
+<span class="gp">In [3]: </span><span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">)]</span>
+
+<span class="gp">In [4]: </span><span class="o">%</span><span class="k">timeit</span> pythonic_dot(xs, ys)
+<span class="go">552 µs ± 8.65 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="gp">In [2]: </span><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="gp">In [3]: </span><span class="n">xs</span><span class="o">.</span><span class="n">dtype</span>
+<span class="gh">Out[3]: </span><span class="go">dtype(&#39;float64&#39;)</span>
+
+<span class="gp">In [4]: </span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span>
+<span class="gh">Out[4]: </span><span class="go">(10000,)</span>
+
+<span class="gp">In [5]: </span><span class="n">xs</span><span class="o">.</span><span class="n">strides</span>
+<span class="gh">Out[5]: </span><span class="go">(8,)</span>
+
+<span class="gp">In [6]: </span><span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="gp">In [7]: </span><span class="o">%</span><span class="k">timeit</span> np.dot(xs, ys)
+<span class="go">2.45 µs ± 16.5 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These are both <span class="math notranslate nohighlight">\(O(n)\)</span> implementations.</p>
+</div>
+</div>
+<div class="section" id="broadcasting">
+<h2>Broadcasting<a class="headerlink" href="#broadcasting" title="Permalink to this headline">¶</a></h2>
+<p>Not only is numpy efficient, it is pleasant to use. One of the most pleasant
+features of numpy is called “broadcasting”. Broadcasting happens when you want
+to perform a function with 2 or more arguments. A function here could also be an
+operator like <code class="docutils literal notranslate"><span class="pre">+</span></code> or <code class="docutils literal notranslate"><span class="pre">*</span></code>. Broadcasting is a set of rules that allow us to
+align two array-like inputs so that we can formally define the operation. The
+steps for broadcasting are:</p>
+<ol class="arabic simple">
+<li>Align the <em>shape</em> of the two elements by left-extending with 1.</li>
+<li>Compare the shapes axis by axis, if they are not equal, one side must be 1,
+otherwise the shapes are <strong>not</strong> compatible.</li>
+<li>Convert any value equal to 1 in the shape to the max value on that dimension
+by repeating along that axis. At this point, the arrays will be the same
+shape.</li>
+<li>Apply the scalar function element-wise.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Remember that the shape of a scalar is <code class="docutils literal notranslate"><span class="pre">()</span></code>.</p>
+</div>
+<div class="section" id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="np-array-1-2-3-10">
+<h4><code class="docutils literal notranslate"><span class="pre">np.array([1,</span> <span class="pre">2,</span> <span class="pre">3])</span> <span class="pre">+</span> <span class="pre">10</span></code><a class="headerlink" href="#np-array-1-2-3-10" title="Permalink to this headline">¶</a></h4>
+<p>let <code class="docutils literal notranslate"><span class="pre">lhs</span> <span class="pre">=</span> <span class="pre">np.array([1,</span> <span class="pre">2,</span> <span class="pre">3])</span></code>
+let <code class="docutils literal notranslate"><span class="pre">rhs</span> <span class="pre">=</span> <span class="pre">10</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">lhs.shape</span> <span class="pre">==</span> <span class="pre">(3,)</span></code>, <code class="docutils literal notranslate"><span class="pre">rhs.shape</span> <span class="pre">==</span> <span class="pre">()</span></code></p>
+<ol class="arabic simple">
+<li>Left extend the shape of <code class="docutils literal notranslate"><span class="pre">rhs</span></code> with 1, giving us <code class="docutils literal notranslate"><span class="pre">rhs.shape</span> <span class="pre">=</span> <span class="pre">(1,)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">rhs</span> <span class="pre">=</span> <span class="pre">np.array([10])</span></code>.</li>
+<li>Compare the shapes, <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">!=</span> <span class="pre">1</span></code>; however, one of the values is 1.</li>
+<li>Convert the <code class="docutils literal notranslate"><span class="pre">1</span></code> in the rhs shape to <code class="docutils literal notranslate"><span class="pre">3</span></code> by repeating along the axis. Now
+<code class="docutils literal notranslate"><span class="pre">rhs</span> <span class="pre">=</span> <span class="pre">np.array([10,</span> <span class="pre">10,</span> <span class="pre">10])</span></code>.</li>
+<li>Apply the scalar function element-wise: <code class="docutils literal notranslate"><span class="pre">[1</span> <span class="pre">+</span> <span class="pre">10,</span> <span class="pre">2</span> <span class="pre">+</span> <span class="pre">10,</span> <span class="pre">3</span> <span class="pre">+</span> <span class="pre">10]</span></code></li>
+</ol>
+<p>Result: <code class="docutils literal notranslate"><span class="pre">np.array([11,</span> <span class="pre">12,</span> <span class="pre">13])</span></code></p>
+</div>
+<div class="section" id="np-array-1-2-3-np-array-2-3-4">
+<h4><code class="docutils literal notranslate"><span class="pre">np.array([1,</span> <span class="pre">2,</span> <span class="pre">3])</span> <span class="pre">*</span> <span class="pre">np.array([2,</span> <span class="pre">3,</span> <span class="pre">4])</span></code><a class="headerlink" href="#np-array-1-2-3-np-array-2-3-4" title="Permalink to this headline">¶</a></h4>
+<p>let <code class="docutils literal notranslate"><span class="pre">lhs</span> <span class="pre">=</span> <span class="pre">np.array([1,</span> <span class="pre">2,</span> <span class="pre">3])</span></code>
+let <code class="docutils literal notranslate"><span class="pre">rhs</span> <span class="pre">=</span> <span class="pre">np.array([2,</span> <span class="pre">3,</span> <span class="pre">4])</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">lhs.shape</span> <span class="pre">==</span> <span class="pre">(3,)</span></code>, <code class="docutils literal notranslate"><span class="pre">rhs.shape</span> <span class="pre">==</span> <span class="pre">(3,)</span></code></p>
+<ol class="arabic simple">
+<li>The shapes are already aligned.</li>
+<li>The shapes are equal.</li>
+<li>There are no <code class="docutils literal notranslate"><span class="pre">1</span></code> values in the shape.</li>
+<li>Apply the scalar function element-wise: <code class="docutils literal notranslate"><span class="pre">[1</span> <span class="pre">*</span> <span class="pre">2,</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">3,</span> <span class="pre">3</span> <span class="pre">*</span> <span class="pre">4]</span></code></li>
+</ol>
+<p>Result: <code class="docutils literal notranslate"><span class="pre">np.array([</span> <span class="pre">2,</span>&#160; <span class="pre">6,</span> <span class="pre">12])</span></code></p>
+</div>
+<div class="section" id="np-array-1-2-3-np-array-2-4">
+<h4><code class="docutils literal notranslate"><span class="pre">np.array([1,</span> <span class="pre">2,</span> <span class="pre">3])</span> <span class="pre">/</span> <span class="pre">np.array([2,</span> <span class="pre">4])</span></code><a class="headerlink" href="#np-array-1-2-3-np-array-2-4" title="Permalink to this headline">¶</a></h4>
+<p>let <code class="docutils literal notranslate"><span class="pre">lhs</span> <span class="pre">=</span> <span class="pre">np.array([1,</span> <span class="pre">2,</span> <span class="pre">3])</span></code>
+let <code class="docutils literal notranslate"><span class="pre">rhs</span> <span class="pre">=</span> <span class="pre">np.array([2,</span> <span class="pre">4])</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">lhs.shape</span> <span class="pre">==</span> <span class="pre">(3,)</span></code>, <code class="docutils literal notranslate"><span class="pre">rhs.shape</span> <span class="pre">==</span> <span class="pre">(2,)</span></code></p>
+<ol class="arabic simple">
+<li>The shapes are already aligned.</li>
+<li>Along axis 0, <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">!=</span> <span class="pre">2</span></code>. Neither <code class="docutils literal notranslate"><span class="pre">3</span></code> nor <code class="docutils literal notranslate"><span class="pre">2</span></code> is equal to <code class="docutils literal notranslate"><span class="pre">1</span></code>. This
+means the shapes are <strong>not</strong> compatible.</li>
+</ol>
+<p>Result: Exception, these shapes are not compatible.</p>
+</div>
+<div class="section" id="np-array-2-3-4-np-array-1-2-1-3">
+<h4><code class="docutils literal notranslate"><span class="pre">np.array([2,</span> <span class="pre">3,</span> <span class="pre">4])</span> <span class="pre">**</span> <span class="pre">np.array([[1</span> <span class="pre">/</span> <span class="pre">2],</span> <span class="pre">[1</span> <span class="pre">/</span> <span class="pre">3]])</span></code><a class="headerlink" href="#np-array-2-3-4-np-array-1-2-1-3" title="Permalink to this headline">¶</a></h4>
+<p>let <code class="docutils literal notranslate"><span class="pre">lhs</span> <span class="pre">=</span> <span class="pre">np.array([2,</span> <span class="pre">3,</span> <span class="pre">4])</span></code>
+let <code class="docutils literal notranslate"><span class="pre">rhs</span> <span class="pre">=</span> <span class="pre">np.array([[1</span> <span class="pre">/</span> <span class="pre">2],</span> <span class="pre">[1</span> <span class="pre">/</span> <span class="pre">3]])</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">lhs.shape</span> <span class="pre">==</span> <span class="pre">(3,)</span></code>, <code class="docutils literal notranslate"><span class="pre">rhs.shape</span> <span class="pre">==</span> <span class="pre">(2,</span> <span class="pre">1)</span></code></p>
+<ol class="arabic">
+<li><p class="first">Align the shapes by left extending the <code class="docutils literal notranslate"><span class="pre">lhs</span></code> with 1: <code class="docutils literal notranslate"><span class="pre">lhs.shape</span> <span class="pre">==</span> <span class="pre">(1,</span>
+<span class="pre">3)</span></code>.</p>
+</li>
+<li><p class="first">Compare the shapes, <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">!=</span> <span class="pre">2</span></code> but there is a one. <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">!=</span> <span class="pre">1</span></code> but there is a
+one.</p>
+</li>
+<li><p class="first">Convert the <code class="docutils literal notranslate"><span class="pre">1</span></code> values to the maximum value along that axis. This gives us:
+<code class="docutils literal notranslate"><span class="pre">lhs.shape</span> <span class="pre">==</span> <span class="pre">(2,</span> <span class="pre">3)</span></code> and <code class="docutils literal notranslate"><span class="pre">rhs.shape</span> <span class="pre">==</span> <span class="pre">(2,</span> <span class="pre">3)</span></code>.</p>
+</li>
+<li><p class="first">Apply the function element-wise:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)],</span> <span class="p">[</span><span class="mi">3</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)],</span> <span class="p">[</span><span class="mi">4</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)],</span>
+ <span class="p">[</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)],</span> <span class="p">[</span><span class="mi">3</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)],</span> <span class="p">[</span><span class="mi">4</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)]]</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Result:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span><span class="mf">1.41421356</span><span class="p">,</span> <span class="mf">1.73205081</span><span class="p">,</span> <span class="mf">2.</span>        <span class="p">],</span>
+       <span class="p">[</span><span class="mf">1.25992105</span><span class="p">,</span> <span class="mf">1.44224957</span><span class="p">,</span> <span class="mf">1.58740105</span><span class="p">]])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This algorithm is just an abstract representation of how alignment
+happens. In practice, numpy does not materialize the extended and aligned
+arrays, it just acts with the input data as is and plays tricks with the
+indexing. This is to reduce the number of allocations and copies improving
+performance.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="profiling.html" class="btn btn-neutral float-right" title="Profiling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="python-overview.html" class="btn btn-neutral" title="Python Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Joe Jevnik
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

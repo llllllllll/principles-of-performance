@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Python Overview &mdash; principles-of-performance  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Numpy Overview" href="numpy-overview.html" />
+    <link rel="prev" title="How to Optimize Code" href="how-to-optimize-code.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> principles-of-performance
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bits.html">Bits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low-level-computation.html">Low Level Computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-locality.html">Memory Locality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-management.html">Memory Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-optimize-code.html">How to Optimize Code</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python-objects">Python Objects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overhead">Overhead</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="numpy-overview.html">Numpy Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">principles-of-performance</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Python Overview</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/python-overview.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="python-overview">
+<h1>Python Overview<a class="headerlink" href="#python-overview" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Some of this content is specific to CPython, which is most common
+implementation of Python. This is the program that runs when you run <code class="docutils literal notranslate"><span class="pre">$</span>
+<span class="pre">python</span></code> in a terminal.</p>
+</div>
+<p>Python is a high level programming language, meaning that it is designed to
+abstract away the details of the machine, and instead present a simpler
+interface. The Python programming language provides a few important features
+that make programming easier:</p>
+<ol class="arabic simple">
+<li>Automatic <a class="reference internal" href="appendix.html#memory-management"><span class="std std-ref">Memory Management</span></a>.</li>
+<li>Object oriented programming.</li>
+<li>Dynamic typing.</li>
+</ol>
+<div class="section" id="python-objects">
+<h2>Python Objects<a class="headerlink" href="#python-objects" title="Permalink to this headline">¶</a></h2>
+<p>In object oriented programming (OOP), <a class="reference internal" href="appendix.html#object"><span class="std std-ref">objects</span></a> are values paired
+with their operations. For example, to execute the code <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span></code>, we need to
+inspect <code class="docutils literal notranslate"><span class="pre">a</span></code> at runtime and ask <code class="docutils literal notranslate"><span class="pre">a</span></code> how <code class="docutils literal notranslate"><span class="pre">a</span></code> it performs addition.</p>
+<p>To store the behavior, Python has objects need to carry around a collection of
+implementations for all of the operations they support in a way that may be
+accessed dynamically. One way to do this, given a fixed set of operations which
+may be performed, would be to use a <a class="reference internal" href="appendix.html#struct"><span class="std std-ref">struct</span></a> to store the
+addresses of the operations at fixed offsets from some base address. For
+example:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">type</span> <span class="p">{</span>
+    <span class="n">poiner</span> <span class="n">add_address</span><span class="p">;</span>
+    <span class="n">pointer</span> <span class="n">sub_address</span><span class="p">;</span>
+    <span class="n">pointer</span> <span class="n">mul_address</span><span class="p">;</span>
+    <span class="n">pointer</span> <span class="n">div_address</span><span class="p">;</span>
+    <span class="p">...</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Then, values can be a struct like:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">value</span> <span class="p">{</span>
+    <span class="n">pointer</span> <span class="n">type</span><span class="p">;</span>
+    <span class="c1">// type specific data goes here</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Because the size of each value differs depending on the type, which cannot be
+known ahead of time because Python is dynamically typed, Python just refers to
+all objects through a pointer to the <code class="docutils literal notranslate"><span class="pre">value</span></code> struct. All we know is that the
+first member of the <code class="docutils literal notranslate"><span class="pre">value</span></code> struct will be a pointer to some collection of
+functions which will be designed to know the true size of the object and how to
+interpret the data. This means that at minimum we must do one <a class="reference internal" href="appendix.html#dereference"><span class="std std-ref">memory
+dereference</span></a> to perform any operation on a Python object.</p>
+<p>Using this model, let’s walk through the execution of:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><a class="reference internal" href="appendix.html#dereference"><span class="std std-ref">Dereference</span></a> <code class="docutils literal notranslate"><span class="pre">a</span></code>.</li>
+<li><a class="reference internal" href="appendix.html#dereference"><span class="std std-ref">Dereference</span></a> <code class="docutils literal notranslate"><span class="pre">a</span></code>’s type.</li>
+<li>Jump to the implementation of <code class="docutils literal notranslate"><span class="pre">add</span></code> for the type of a.</li>
+<li><a class="reference internal" href="appendix.html#dereference"><span class="std std-ref">Dereference</span></a> <code class="docutils literal notranslate"><span class="pre">b</span></code></li>
+<li>Check if the type of <code class="docutils literal notranslate"><span class="pre">b</span></code> can be added to the type of <code class="docutils literal notranslate"><span class="pre">a</span></code>.
+- If not, throw an exception.</li>
+<li><a class="reference internal" href="appendix.html#allocation"><span class="std std-ref">Allocate</span></a> memory to store the result of the addition.</li>
+<li>Perform the addition and store the result in the newly allocated memory.</li>
+</ol>
+<p>Here is what all of the memory <a class="reference internal" href="appendix.html#dereference"><span class="std std-ref">dereferences</span></a> look like for
+<code class="docutils literal notranslate"><span class="pre">5</span> <span class="pre">+</span> <span class="pre">3</span></code>.</p>
+<img alt="_images/addition-dereferences.png" src="_images/addition-dereferences.png" />
+<div class="section" id="overhead">
+<h3>Overhead<a class="headerlink" href="#overhead" title="Permalink to this headline">¶</a></h3>
+<p>All of this extra “pointer chasing”, runtime type checking, and allocation
+<em>really</em> adds up. For example, let’s inspect a simple dot product function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ix</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">ix</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+        <span class="n">ix</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">out</span>
+</pre></div>
+</div>
+<p>Let’s see how this function performs:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [2]: </span><span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="gp">In [3]: </span><span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+
+<span class="gp">In [4]: </span><span class="n">dot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+<span class="gh">Out[4]: </span><span class="go">32</span>
+
+<span class="gp">In [5]: </span><span class="mi">1</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">6</span>
+<span class="gh">Out[5]: </span><span class="go">32</span>
+
+<span class="gp">In [7]: </span><span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">)]</span>
+
+<span class="gp">In [8]: </span><span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">)]</span>
+
+<span class="gp">In [9]: </span><span class="n">dot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+<span class="gh">Out[9]: </span><span class="go">2493.0449981169236</span>
+
+<span class="gp">In [10]: </span><span class="o">%</span><span class="k">timeit</span> dot(xs, ys)
+<span class="go">1.52 ms ± 15.4 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)</span>
+</pre></div>
+</div>
+<p>1.5 milliseconds to take the dot product of 10000 elements, that seems pretty
+quick, but what about a more pythonic implementation of <code class="docutils literal notranslate"><span class="pre">dot</span></code>?</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pythonic_dot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [12]: </span><span class="o">%</span><span class="k">timeit</span> pythonic_dot(xs, ys)
+<span class="go">552 µs ± 8.65 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)</span>
+</pre></div>
+</div>
+<p>This function is shorter and better expresses our intent. It is also
+considerably faster, why is that? In short, Python’s built in function like
+<code class="docutils literal notranslate"><span class="pre">zip</span></code> and <code class="docutils literal notranslate"><span class="pre">sum</span></code> take advantage of the repetition of accessing
+elements. Instead of constantly checking the object and saying, “how should I
+retrieve elements from you”, it asks the question once and re-uses the answer
+many times. This reduces the over all number of memory accesses and instructions
+needed.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="numpy-overview.html" class="btn btn-neutral float-right" title="Numpy Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="how-to-optimize-code.html" class="btn btn-neutral" title="How to Optimize Code" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Joe Jevnik
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

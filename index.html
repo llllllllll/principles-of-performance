@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Principles of Performance &mdash; principles-of-performance  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bits" href="bits.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> principles-of-performance
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="bits.html">Bits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low-level-computation.html">Low Level Computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-locality.html">Memory Locality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory-management.html">Memory Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-optimize-code.html">How to Optimize Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-overview.html">Python Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy-overview.html">Numpy Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">principles-of-performance</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>Principles of Performance</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="principles-of-performance">
+<h1>Principles of Performance<a class="headerlink" href="#principles-of-performance" title="Permalink to this headline">¶</a></h1>
+<p>Today the quant finance and fintech sectors attract top talent from a wide range
+of quantitative academic backgrounds, often outside of traditional computer
+science. While this diversity has been advantageous in many respects, these
+students and professionals can often find themselves mired by performance
+related issues when they take their analyses from the classroom setting to the
+marketplace and have to interface with real world data structures at scale. This
+tutorial will cover the basic foundational concepts needed to effectively design
+and implement scalable algorithms like those common to quant finance or related
+financial technology applications.</p>
+<p>Many common performance issues are rooted in a lack of knowledge about how a
+computer actually performs computation. We will begin by covering how modern
+computers physically execute code. This low level information will help us
+reason about the behavior of our high level code later. We will then look at
+Python’s execution model with our new understanding of the machine. We will then
+discuss how numpy allows us to take full advantage of the power of our computer
+while staying in Python. Finally, we will look at tools for analyzing the
+performance of Python programs and cover common issues and fixes.</p>
+<p>By the end of this session, attendees will:</p>
+<ul class="simple">
+<li>Have a general understanding of how the processor works.</li>
+<li>Know about memory management and cache locality.</li>
+<li>Understand the reason Python is “slow”.</li>
+<li>Understand how numpy makes Python fast.</li>
+<li>Be familiar with using cProfile to analyze programs.</li>
+</ul>
+<div class="section" id="install-steps">
+<h2>Install Steps<a class="headerlink" href="#install-steps" title="Permalink to this headline">¶</a></h2>
+<p>Prior to the tutorial, attendees need to install a git and Python 3.6. After
+that, run the following commands.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone --recursive https://github.com/llllllllll/principles-of-performance.git
+$ <span class="nb">cd</span> principles-of-principles
+$ <span class="nb">source</span> etc/setup-env
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">setup-env</span></code> script will attempt to download the needed packages.
+The <code class="docutils literal notranslate"><span class="pre">setup-env</span></code> should print a lot of stuff to the terminal. You can ignore
+most of it but the last line should be:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Environment is setup correctly!
+</pre></div>
+</div>
+</div>
+<div class="section" id="viewing-the-tutorial">
+<h2>Viewing the Tutorial<a class="headerlink" href="#viewing-the-tutorial" title="Permalink to this headline">¶</a></h2>
+<p>The tutorial is structured as a sphinx project. This allows the tutorial to be
+viewed from a standard browser or hosted online.</p>
+<p>The material can be viewed in a browser by opening
+<code class="docutils literal notranslate"><span class="pre">tutorial/build/html/index.html</span></code>, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="si">${</span><span class="nv">BROWSER</span><span class="si">}</span> tutorial/build/html/index.html
+</pre></div>
+</div>
+</div>
+<div class="section" id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this headline">¶</a></h2>
+<p>The numpy examples are sourced from Scott Sanderson’s
+<a class="reference external" href="https://github.com/ssanderson/foundations-of-numerical-computing">https://github.com/ssanderson/foundations-of-numerical-computing</a></p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="bits.html">Bits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bits.html#representing-non-negative-integers-with-bits">Representing Non-Negative Integers with Bits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bits.html#addition-with-bits">Addition with Bits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bits.html#representing-negative-numbers">Representing Negative Numbers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="low-level-computation.html">Low Level Computation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="low-level-computation.html#main-memory">Main Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-level-computation.html#computation-circuits">Computation Circuits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-level-computation.html#bitness">Bitness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-level-computation.html#sequencing-low-level-operations">Sequencing Low Level Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="arrays-and-structs.html">Arrays and Structs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="arrays-and-structs.html#arrays">Arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arrays-and-structs.html#structs">Structs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arrays-and-structs.html#multi-dimensional-arrays">Multi-Dimensional Arrays</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="memory-locality.html">Memory Locality</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="memory-locality.html#cache-hierarchy">Cache Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-locality.html#multi-dimensional-arrays">Multi-Dimensional Arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-locality.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="memory-management.html">Memory Management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="memory-management.html#virtual-memory">Virtual Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-management.html#two-tiers-of-allocation">Two Tiers of Allocation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-optimize-code.html">How to Optimize Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="how-to-optimize-code.html#algorithmic-complexity">Algorithmic Complexity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how-to-optimize-code.html#allocations-and-copies">Allocations and Copies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how-to-optimize-code.html#the-fastest-operation">The Fastest Operation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="python-overview.html">Python Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="python-overview.html#python-objects">Python Objects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="numpy-overview.html">Numpy Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="numpy-overview.html#ndarray"><code class="docutils literal notranslate"><span class="pre">ndarray</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="numpy-overview.html#operations">Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="numpy-overview.html#broadcasting">Broadcasting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="profiling.html">Profiling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="profiling.html#cprofile">cProfile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profiling.html#pstats">pstats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendix</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="appendix.html#processor">Processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendix.html#memory">Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendix.html#data-structures">Data Structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendix.html#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="bits.html" class="btn btn-neutral float-right" title="Bits" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Joe Jevnik
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
