@@ -37,7 +37,7 @@ that, run the following commands.
 .. code-block:: bash
 
    $ git clone --recursive https://github.com/llllllllll/principles-of-performance.git
-   $ cd principles-of-principles
+   $ cd principles-of-performance
    $ source etc/setup-env
 
 The ``setup-env`` script will attempt to download the needed packages.
