@@ -144,7 +144,7 @@ region of memory can evict the entire working set from the :ref:`L1 <L1>` cache
 because it is touching a lot of memory at once.
 
 This isn't to say that you shouldn't allocate any memory. Programs sometimes
-need to store there results in new allocations; however, be careful about it.
+need to store their results in new allocations; however, be careful about it.
 
 The Fastest Operation
 ---------------------

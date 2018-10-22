@@ -33,7 +33,7 @@ example:
 .. code-block:: c
 
    struct type {
-       poiner add_address;
+       pointer add_address;
        pointer sub_address;
        pointer mul_address;
        pointer div_address;
