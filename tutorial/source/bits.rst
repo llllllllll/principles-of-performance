@@ -79,7 +79,7 @@ To walk through an example, we will try to add 13 and 4:
    +  100
    -------
        01     (0 + 1) = 1
-              (0 + 1) = 0
+              (0 + 0) = 0
 
 ::
 
@@ -88,7 +88,7 @@ To walk through an example, we will try to add 13 and 4:
    +  100
    -------
       001     (0 + 1) = 1
-              (0 + 1) = 0
+              (0 + 0) = 0
               (1 + 1) = 10 = 0 carry 1
 
 ::
@@ -98,7 +98,7 @@ To walk through an example, we will try to add 13 and 4:
    +  100
    -------
      0001     (0 + 1) = 1
-              (0 + 1) = 0
+              (0 + 0) = 0
               (1 + 1) = 10 = 0 carry 1
               (1 + 1) = 10 = 0 carry 1
 
@@ -109,7 +109,7 @@ To walk through an example, we will try to add 13 and 4:
    +  100
    -------
     10001     (0 + 1) = 1
-              (0 + 1) = 0
+              (0 + 0) = 0
               (1 + 1) = 10 = 0 carry 1
               (1 + 1) = 10 = 0 carry 1
               (1 + 0) = 1
