@@ -100,7 +100,7 @@ the operation is valid and if it is, execute an optimized loop to perform that
 operation given the operands.
 
 For example, let's look at "sum". When summing a Python list of Python integers,
-we need to ask every into how to add itself to another int. At every step we
+we need to ask every int how to add itself to another int. At every step we
 need to re-check the operands and find the proper implementation of "add". Also,
 we will need to :ref:`allocate <allocation>` a new integer object for every
 intermediate sum. Using an :class:`~numpy.ndarray`, we already know up front

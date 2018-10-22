@@ -156,14 +156,14 @@ Example:
      List reduced from 344 to 1 due to restriction <'_consume_actions'>
 
   Function                                                                                    called...
-                                                                                                  ncalls  tottime  cumtime
+                                                                                ncalls  tottime  cumtime
   /home/joe/projects/python/slider/slider/replay.py:132(_consume_actions)  -> 29287456   96.881  144.685  /home/joe/projects/python/slider/slider/bit_enum.py:33(unpack)
-                                                                                                29287456   12.551   12.551  /home/joe/projects/python/slider/slider/replay.py:43(__init__)
-                                                                                                    3423    0.002    0.004  /home/joe/projects/python/slider/slider/replay.py:75(_consume_int)
-                                                                                                    3423    0.025    8.845  /usr/lib64/python3.6/lzma.py:322(decompress)
-                                                                                                29287456    7.258   13.943  <string>:12(__new__)
-                                                                                                29287456    2.627    2.627  {method 'append' of 'list' objects}
-                                                                                                29290879    8.439    8.439  {method 'split' of 'bytes' objects}
+                                                                              29287456   12.551   12.551  /home/joe/projects/python/slider/slider/replay.py:43(__init__)
+                                                                                  3423    0.002    0.004  /home/joe/projects/python/slider/slider/replay.py:75(_consume_int)
+                                                                                  3423    0.025    8.845  /usr/lib64/python3.6/lzma.py:322(decompress)
+                                                                              29287456    7.258   13.943  <string>:12(__new__)
+                                                                              29287456    2.627    2.627  {method 'append' of 'list' objects}
+                                                                              29290879    8.439    8.439  {method 'split' of 'bytes' objects}
 
 callers
 ~~~~~~~
@@ -181,9 +181,9 @@ Example::
       List reduced from 344 to 1 due to restriction <'unpack'>
 
    Function                                                                           was called by...
-                                                                                          ncalls  tottime  cumtime
+                                                                        ncalls  tottime  cumtime
    /home/joe/projects/python/slider/slider/bit_enum.py:33(unpack)  <- 29287456   96.881  144.685  /home/joe/projects/python/slider/slider/replay.py:132(_consume_actions)
-                                                                                            3423    0.006    0.059  /home/joe/projects/python/slider/slider/replay.py:626(parse)
+                                                                          3423    0.006    0.059  /home/joe/projects/python/slider/slider/replay.py:626(parse)
 
 Here we can see that there are 2 calls to ``unpack`` in ``replay.py``; however,
 with ``callers`` it is clear that almost all of the calls are coming from
